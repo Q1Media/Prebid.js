@@ -17,7 +17,8 @@ let _bidderSequence = null;
 function getBids({bidderCode, requestId, bidderRequestId, adUnits}) {
     return adUnits.map(adUnit => {
         return adUnit.bids.filter(bid => bid.bidder === bidderCode)
-            .map(bid => {
+            .map(
+                bid => {
                     let sizes = adUnit.sizes;
                     if (adUnit.sizeMapping) {
                         let sizeMapping = mapSizes(adUnit);
