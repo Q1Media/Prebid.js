@@ -1,4 +1,4 @@
-import { videoAdapters } from './adaptermanager';
+import {videoAdapters} from './adaptermanager';
 
 /**
  * Helper functions for working with video-enabled adUnits

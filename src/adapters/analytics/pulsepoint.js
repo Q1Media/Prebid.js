@@ -8,5 +8,5 @@ export default adapter({
     global: 'PulsePointPrebidAnalytics',
     handler: 'on',
     analyticsType: 'bundle'
-  });
+});
 

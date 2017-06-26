@@ -18,81 +18,81 @@ let eventStack = {options: {}, events: []};
 let auctionStatus = 'not_started';
 
 function checkOptions() {
-  if (typeof initOptions.publisherIds === 'undefined') {
-    return false;
-  }
+    if (typeof initOptions.publisherIds === 'undefined') {
+        return false;
+    }
 
-  return initOptions.publisherIds.length > 0;
+    return initOptions.publisherIds.length > 0;
 }
 
 function buildBidWon(eventType, args) {
-  bidWon.options = initOptions;
-  bidWon.events = [{args: args, eventType: eventType}];
+    bidWon.options = initOptions;
+    bidWon.events = [{args: args, eventType: eventType}];
 }
 
 function buildEventStack() {
-  eventStack.options = initOptions;
+    eventStack.options = initOptions;
 }
 
 function send(eventType, data, sendDataType) {
-  let fullUrl = url + '?publisherIds[]=' + initOptions.publisherIds.join('&publisherIds[]=') + '&host=' + window.location.hostname;
+    let fullUrl = url + '?publisherIds[]=' + initOptions.publisherIds.join('&publisherIds[]=') + '&host=' + window.location.hostname;
 
-  ajax(
-    fullUrl,
-    (result) => utils.logInfo('Event ' + eventType + ' sent ' + sendDataType + ' to roxot prebid analytic with result' + result),
-    JSON.stringify(data)
-  );
+    ajax(
+        fullUrl,
+        (result) => utils.logInfo('Event ' + eventType + ' sent ' + sendDataType + ' to roxot prebid analytic with result' + result),
+        JSON.stringify(data)
+    );
 }
 
 function pushEvent(eventType, args) {
-  eventStack.events.push({eventType, args});
+    eventStack.events.push({eventType, args});
 }
 
 function flushEvents() {
-  eventStack.events = [];
+    eventStack.events = [];
 }
 
 let roxotAdapter = Object.assign(adapter({url, analyticsType}),
-  {
-    track({eventType, args}) {
-      if (!checkOptions()) {
-        return;
-      }
+    {
+        track({eventType, args}) {
+            if (!checkOptions()) {
+                return;
+            }
 
-      let info = Object.assign({}, args);
+            let info = Object.assign({}, args);
 
-      if (info && info.ad) {
-        info.ad = "";
-      }
+            if (info && info.ad) {
+                info.ad = "";
+            }
 
-      if (eventType === auctionInitConst) {
-        auctionStatus = 'started';
-        flushEvents();
-      }
+            if (eventType === auctionInitConst) {
+                auctionStatus = 'started';
+                flushEvents();
+            }
 
-      if ((eventType === bidWonConst) && auctionStatus === 'not_started') {
-        buildBidWon(eventType,info);
-        send(eventType, bidWon, 'bidWon');
-        return;
-      }
+            if ((eventType === bidWonConst) && auctionStatus === 'not_started') {
+                buildBidWon(eventType, info);
+                send(eventType, bidWon, 'bidWon');
+                return;
+            }
 
-      if (eventType === auctionEndConst) {
-        buildEventStack(eventType);
-        send(eventType, eventStack, 'eventStack');
-        flushEvents();
-        auctionStatus = 'not_started';
-      } else {
-        pushEvent(eventType, info);
-      }
-    }
-  });
+            if (eventType === auctionEndConst) {
+                buildEventStack(eventType);
+                send(eventType, eventStack, 'eventStack');
+                flushEvents();
+                auctionStatus = 'not_started';
+            } else {
+                pushEvent(eventType, info);
+            }
+        }
+    });
 
 roxotAdapter.originEnableAnalytics = roxotAdapter.enableAnalytics;
 
 roxotAdapter.enableAnalytics = function (config) {
-  initOptions = config.options;
-  utils.logInfo('Roxot Analytics enabled with config', initOptions);
-  roxotAdapter.originEnableAnalytics(config);
+    initOptions = config.options;
+    utils.logInfo('Roxot Analytics enabled with config', initOptions);
+    roxotAdapter.originEnableAnalytics(config);
 };
 
 export default roxotAdapter;

@@ -7,57 +7,57 @@ const STR_BIDDER_CODE = "sharethrough";
 const STR_VERSION = "0.1.0";
 
 export default Object.assign(adapter(
-  {
-    emptyUrl,
-    analyticsType
-  }
-),
-  {
-  STR_BEACON_HOST: document.location.protocol + "//b.sharethrough.com/butler?",
-  placementCodeSet: {},
-
-  track({ eventType, args }) {
-    if(eventType === 'bidRequested' && args.bidderCode === 'sharethrough') {
-      var bids = args.bids;
-      var keys = Object.keys(bids);
-      for(var i = 0; i < keys.length; i++) {
-        this.placementCodeSet[bids[keys[i]].placementCode] = args.bids[keys[i]];
-      }
+    {
+        emptyUrl,
+        analyticsType
     }
+    ),
+    {
+        STR_BEACON_HOST: document.location.protocol + "//b.sharethrough.com/butler?",
+        placementCodeSet: {},
 
-    if(eventType === 'bidWon') {
-      this.bidWon(args);
-    }
-  },
+        track({eventType, args}) {
+            if (eventType === 'bidRequested' && args.bidderCode === 'sharethrough') {
+                var bids = args.bids;
+                var keys = Object.keys(bids);
+                for (var i = 0; i < keys.length; i++) {
+                    this.placementCodeSet[bids[keys[i]].placementCode] = args.bids[keys[i]];
+                }
+            }
 
-  bidWon(args) {
-    const curBidderCode = args.bidderCode;
+            if (eventType === 'bidWon') {
+                this.bidWon(args);
+            }
+        },
 
-    if(curBidderCode !== STR_BIDDER_CODE && (args.adUnitCode in this.placementCodeSet)) {
-      let strBid = this.placementCodeSet[args.adUnitCode];
-      this.fireLoseBeacon(curBidderCode, args.cpm, strBid.adserverRequestId, "headerBidLose");
-    }
-  },
+        bidWon(args) {
+            const curBidderCode = args.bidderCode;
 
-  fireLoseBeacon(winningBidderCode, winningCPM, arid, type) {
-    let loseBeaconUrl = this.STR_BEACON_HOST;
-    loseBeaconUrl = utils.tryAppendQueryString(loseBeaconUrl, "winnerBidderCode", winningBidderCode);
-    loseBeaconUrl = utils.tryAppendQueryString(loseBeaconUrl, "winnerCpm", winningCPM);
-    loseBeaconUrl = utils.tryAppendQueryString(loseBeaconUrl, "arid", arid);
-    loseBeaconUrl = utils.tryAppendQueryString(loseBeaconUrl, "type", type);
-    loseBeaconUrl = this.appendEnvFields(loseBeaconUrl);
+            if (curBidderCode !== STR_BIDDER_CODE && (args.adUnitCode in this.placementCodeSet)) {
+                let strBid = this.placementCodeSet[args.adUnitCode];
+                this.fireLoseBeacon(curBidderCode, args.cpm, strBid.adserverRequestId, "headerBidLose");
+            }
+        },
 
-    this.fireBeacon(loseBeaconUrl);
-  },
-  appendEnvFields(url) {
-    url = utils.tryAppendQueryString(url, 'hbVersion', '$prebid.version$');
-    url = utils.tryAppendQueryString(url, 'strVersion', STR_VERSION);
-    url = utils.tryAppendQueryString(url, 'hbSource', 'prebid');
+        fireLoseBeacon(winningBidderCode, winningCPM, arid, type) {
+            let loseBeaconUrl = this.STR_BEACON_HOST;
+            loseBeaconUrl = utils.tryAppendQueryString(loseBeaconUrl, "winnerBidderCode", winningBidderCode);
+            loseBeaconUrl = utils.tryAppendQueryString(loseBeaconUrl, "winnerCpm", winningCPM);
+            loseBeaconUrl = utils.tryAppendQueryString(loseBeaconUrl, "arid", arid);
+            loseBeaconUrl = utils.tryAppendQueryString(loseBeaconUrl, "type", type);
+            loseBeaconUrl = this.appendEnvFields(loseBeaconUrl);
 
-    return url;
-  },
-  fireBeacon(theUrl) {
-    const img = new Image();
-    img.src = theUrl;
-  }
-});
+            this.fireBeacon(loseBeaconUrl);
+        },
+        appendEnvFields(url) {
+            url = utils.tryAppendQueryString(url, 'hbVersion', '$prebid.version$');
+            url = utils.tryAppendQueryString(url, 'strVersion', STR_VERSION);
+            url = utils.tryAppendQueryString(url, 'hbSource', 'prebid');
+
+            return url;
+        },
+        fireBeacon(theUrl) {
+            const img = new Image();
+            img.src = theUrl;
+        }
+    });
