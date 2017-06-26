@@ -8,5 +8,5 @@ export default adapter({
     global: 'AppNexusPrebidAnalytics',
     handler: 'on',
     analyticsType: 'bundle'
-  });
+});
 

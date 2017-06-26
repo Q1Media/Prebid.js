@@ -15,40 +15,40 @@ var utils = require('./utils.js');
  priceKeyString;
  */
 function Bid(statusCode, bidRequest) {
-  var _bidId = bidRequest && bidRequest.bidId || utils.getUniqueIdentifierStr();
-  var _statusCode = statusCode || 0;
+    var _bidId = bidRequest && bidRequest.bidId || utils.getUniqueIdentifierStr();
+    var _statusCode = statusCode || 0;
 
-  this.bidderCode = '';
-  this.width = 0;
-  this.height = 0;
-  this.statusMessage = _getStatus();
-  this.adId = _bidId;
+    this.bidderCode = '';
+    this.width = 0;
+    this.height = 0;
+    this.statusMessage = _getStatus();
+    this.adId = _bidId;
 
-  function _getStatus() {
-    switch (_statusCode) {
-      case 0:
-        return 'Pending';
-      case 1:
-        return 'Bid available';
-      case 2:
-        return 'Bid returned empty or error response';
-      case 3:
-        return 'Bid timed out';
+    function _getStatus() {
+        switch (_statusCode) {
+            case 0:
+                return 'Pending';
+            case 1:
+                return 'Bid available';
+            case 2:
+                return 'Bid returned empty or error response';
+            case 3:
+                return 'Bid timed out';
+        }
     }
-  }
 
-  this.getStatusCode = function () {
-    return _statusCode;
-  };
+    this.getStatusCode = function () {
+        return _statusCode;
+    };
 
-  //returns the size of the bid creative. Concatenation of width and height by ‘x’.
-  this.getSize = function () {
-    return this.width + 'x' + this.height;
-  };
+    //returns the size of the bid creative. Concatenation of width and height by ‘x’.
+    this.getSize = function () {
+        return this.width + 'x' + this.height;
+    };
 
 }
 
 // Bid factory function.
 exports.createBid = function () {
-  return new Bid(...arguments);
+    return new Bid(...arguments);
 };

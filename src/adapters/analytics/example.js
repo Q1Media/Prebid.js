@@ -5,10 +5,10 @@
 import adapter from 'AnalyticsAdapter';
 
 export default adapter(
-  {
-    url: 'http://localhost:9999/src/adapters/analytics/libraries/example.js',
-    global: 'ExampleAnalyticsGlobalObject',
-    handler: 'on',
-    analyticsType: 'library'
-  }
+    {
+        url: 'http://localhost:9999/src/adapters/analytics/libraries/example.js',
+        global: 'ExampleAnalyticsGlobalObject',
+        handler: 'on',
+        analyticsType: 'library'
+    }
 );
