@@ -16,7 +16,6 @@ w.trackR1Impression = track;
 
 module.exports = function (bidManager, global, loader) {
     var version = '0.1',
-        bidfloor = 0.02,
         currency = 'USD',
         debug = false,
         auctionEnded = false,
